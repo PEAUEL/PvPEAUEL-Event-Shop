@@ -13,6 +13,43 @@
             padding: 0;
             box-sizing: border-box;
         }
+/* Container für das Overlay */
+.custom-overlay {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1e1e24;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 1000;
+    animation: slideIn 0.3s ease forwards;
+    font-family: sans-serif;
+    border-left: 5px solid #333;
+}
+
+/* Farb-Variationen je nach Code-Typ */
+.custom-overlay.success { border-left-color: #2ecc71; }
+.custom-overlay.info { border-left-color: #3498db; }
+
+/* Inhalt-Styling */
+.overlay-content h3 { margin: 0 0 5px 0; font-size: 1.1rem; }
+.overlay-content p { margin: 0 0 15px 0; font-size: 0.9rem; color: #ccc; }
+.overlay-content button {
+    background: #e74c3c;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Einblende-Animation */
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
 
         body, html {
             width: 100%;
