@@ -1005,11 +1005,6 @@
             }
         }
 
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
         @keyframes slideInRight {
             from {
                 opacity: 0;
@@ -1021,251 +1016,47 @@
             }
         }
 
-        /* Deko-Elemente */
-        .terminal-header {
-            display: flex;
-            justify-content: flex-start;
-            gap: 6px;
-            margin-bottom: 15px;
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-        .dot.r { background: #ff5f56; }
-        .dot.y { background: #ffbd2e; }
-        .dot.g { background: #27c93f; }
-
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .cart-sidebar {
-                width: 320px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .inventory-grid {
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 15px;
-            }
-
-            .shop-container {
-                max-width: 100%;
-            }
-
-            .login-container {
-                max-width: 100%;
-            }
-
-            .cart-sidebar {
-                width: 100%;
-            }
-
-            .cart-button-fixed {
-                bottom: 20px;
-                right: 20px;
-            }
-
-            .cart-btn {
-                width: 50px;
-                height: 50px;
-                font-size: 1.3rem;
-            }
-
-            .code-info-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .code-modal {
-                width: 95%;
-                max-height: 90vh;
-            }
-
-            .modal-header {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .modal-title {
-                font-size: 1rem;
-            }
-
-            .modal-body {
-                padding: 20px;
-            }
-
-            .modal-text {
-                font-size: 0.85rem;
-            }
-        }
-
     </style>
 </head>
 <body>
-    <!-- Versteckte Code-Matrix im Hintergrund -->
     <div class="matrix-bg"></div>
-
-    <!-- Das dunkelblaue Overlay, das durchleuchtet wird -->
-    <div class="darkness-overlay" id="overlay"></div>
-
-    <!-- Content Wrapper -->
+    <div class="darkness-overlay"></div>
+    
     <div class="content-wrapper">
-        <!-- LOGIN/CHECK-IN CONTAINER -->
+        <!-- LOGIN CONTAINER -->
         <div class="login-container">
-            <div class="terminal-header">
-                <div class="dot g"></div>
-                <div class="dot y"></div>
-                <div class="dot r"></div>
-            </div>
-            
-            <h2>CHECK-IN SYSTEM</h2>
-            <p>// SCAN YOUR MEMBER CODE</p>
-            
+            <h2>▓▒░ CHECK-IN ░▒▓</h2>
+            <div class="login-status">Scan your code or enter manually</div>
             <div class="input-group">
-                <input type="text" class="code-input login-input" placeholder="XXXX-000000-XX" maxlength="14" id="loginCode">
+                <input type="text" id="codeInput" class="code-input login-input" placeholder="XXXXXX" maxlength="6">
             </div>
-            
-            <button class="submit-btn login-btn" onclick="checkIn()">VERIFY CREDENTIALS</button>
-
-            <div class="login-status" id="loginStatus">
-                NOT LOGGED IN
-            </div>
-
-            <div class="balance-display" id="balanceDisplay">
-                <div class="balance-item">
-                    <div class="balance-label">MEMBER ID</div>
-                    <div class="balance-value" id="displayMemberId">--</div>
-                </div>
-                <div class="balance-item">
-                    <div class="balance-label">BALANCE</div>
-                    <div class="balance-value">◆ <span id="displayBalance">0</span></div>
-                </div>
-            </div>
+            <button class="submit-btn login-btn" onclick="verifyCode()">VERIFY</button>
         </div>
 
-        <!-- Der Terminal Shop -->
+        <!-- SHOP CONTAINER -->
         <div class="shop-container">
-            <div class="terminal-header">
-                <div class="dot r"></div>
-                <div class="dot y"></div>
-                <div class="dot g"></div>
-            </div>
-            
-            <h1>Black Market</h1>
-            <p>// ENTER ACCESS CODE TO UNLOCK INVENTORY</p>
-            
-            <div class="input-group">
-                <input type="text" class="code-input" placeholder="XXXX-XXXXXX-XX" maxlength="14" id="shopCode">
-            </div>
-            
-            <button class="submit-btn" onclick="decryptShop()">INITIALIZE DECRYPTION</button>
-
-            <!-- CODE INFO SECTION -->
+            <h1>⚡ EVENT SHOP ⚡</h1>
+            <p>Select items and generate your unique code</p>
+            <div class="inventory-grid" id="inventoryGrid"></div>
             <div class="code-info-section" id="codeInfoSection">
-                <div class="code-info-title">📊 TRANSFER CODE DECODER</div>
+                <div class="code-info-title">Your Purchase Code</div>
                 <div class="code-display">
-                    <div class="code-display-label">MINECRAFT TRANSFER CODE</div>
-                    <div class="code-display-text" id="transferCode">XXXX-000000-00</div>
+                    <div class="code-display-label">Secure Code</div>
+                    <div class="code-display-text" id="generatedCode">-</div>
                 </div>
-                <button class="code-copy-btn" onclick="copyToClipboard()">COPY CODE</button>
-                
+                <button class="code-copy-btn" onclick="copyCode()">Copy Code</button>
                 <div class="code-info-grid">
                     <div class="code-info-item">
-                        <div class="code-info-item-label">MEMBER ID</div>
-                        <div class="code-info-item-value" id="memberId">XXXX</div>
+                        <div class="code-info-item-label">Total Items</div>
+                        <div class="code-info-item-value" id="cartItemCount">0</div>
                     </div>
                     <div class="code-info-item">
-                        <div class="code-info-item-label">MONEY (HEX)</div>
-                        <div class="code-info-item-value" id="moneyHex">00</div>
-                    </div>
-                    <div class="code-info-item">
-                        <div class="code-info-item-label">MONEY (DEC)</div>
-                        <div class="code-info-item-value" id="moneyDec">0</div>
-                    </div>
-                    <div class="code-info-item">
-                        <div class="code-info-item-label">ITEMS BOUGHT</div>
-                        <div class="code-info-item-value" id="itemsBought">0</div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0, 243, 255, 0.3);">
-                    <div class="code-info-title" style="margin-bottom: 10px;">ITEM BREAKDOWN</div>
-                    <div id="itemBreakdown" style="font-size: 0.8rem; color: #8da2bb; line-height: 1.6;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- INVENTORY SECTION -->
-        <div class="inventory-grid" id="inventoryGrid">
-            <div class="product-card">
-                <img src="https://via.placeholder.com/280x180/050b14/00f3ff?text=PLASMA+RIFLE" alt="Plasma Rifle" class="product-image">
-                <div class="product-info">
-                    <div class="product-name">Golden Crown</div>
-                    <div class="product-desc">A simple Crown on your head.</div>
-                    <div class="product-footer">
-                        <div class="product-price">50</div>
-                        <button class="buy-btn" onclick="addToCart('Golden Crown', 50)">BUY</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://via.placeholder.com/280x180/050b14/ff0055?text=STEALTH+ARMOR" alt="Stealth Armor" class="product-image">
-                <div class="product-info">
-                    <div class="product-name">Ugly glasses</div>
-                    <div class="product-desc">Uglyer than the Police allows.</div>
-                    <div class="product-footer">
-                        <div class="product-price">-10</div>
-                        <button class="buy-btn" onclick="addToCart('Ugly glasses', -10)">BUY</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://via.placeholder.com/280x180/050b14/00f3ff?text=QUANTUM+DRIVE" alt="Quantum Drive" class="product-image">
-                <div class="product-info">
-                    <div class="product-name">Blue Wings</div>
-                    <div class="product-desc">Simple Blue wings</div>
-                    <div class="product-footer">
-                        <div class="product-price">100</div>
-                        <button class="buy-btn" onclick="addToCart('Blue Wings', 100)">BUY</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://via.placeholder.com/280x180/050b14/ff0055?text=HOLO+DECOY" alt="Holo Decoy" class="product-image">
-                <div class="product-info">
-                    <div class="product-name">Angel Wings</div>
-                    <div class="product-desc">Holy White and Golden Wings</div>
-                    <div class="product-footer">
-                        <div class="product-price">150</div>
-                        <button class="buy-btn" onclick="addToCart('Angel Wings', 150)">BUY</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://via.placeholder.com/280x180/050b14/00f3ff?text=NEURAL+IMPLANT" alt="Neural Implant" class="product-image">
-                <div class="product-info">
-                    <div class="product-name">Better Sword</div>
-                    <div class="product-desc">An asome looking sword</div>
-                    <div class="product-footer">
-                        <div class="product-price">200</div>
-                        <button class="buy-btn" onclick="addToCart('High-Res Sword', 200)">BUY</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <img src="https://via.placeholder.com/280x180/050b14/ff0055?text=EMP+GRENADE" alt="EMP Grenade" class="product-image">
-                <div class="product-info">
-                    <div class="product-name">Armor Trim x4</div>
-                    <div class="product-desc">Any Armortrim you want for your complete set. </div>
-                    <div class="product-footer">
-                        <div class="product-price">250</div>
-                        <button class="buy-btn" onclick="addToCart('Trims x4', 250)">BUY</button>
+                        <div class="code-info-item-label">Total Price</div>
+                        <div class="code-info-item-value" id="cartTotalPrice">0</div>
                     </div>
                 </div>
             </div>
@@ -1275,356 +1066,241 @@
     <!-- CART SIDEBAR -->
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
-            <div class="cart-title">SHOPPING CART</div>
+            <div class="cart-title">CART</div>
             <button class="cart-close" onclick="toggleCart()">✕</button>
         </div>
-        <div class="cart-items" id="cartItems">
-            <div class="cart-empty">NO ITEMS IN CART</div>
-        </div>
+        <div class="cart-items" id="cartItems"></div>
         <div class="cart-footer">
             <div class="cart-total">
                 <span>TOTAL:</span>
-                <span class="cart-total-price">◆ <span id="cartTotal">0</span></span>
+                <span class="cart-total-price" id="cartTotal">0</span>
             </div>
-            <button class="checkout-btn" id="checkoutBtn" onclick="checkout()" disabled>COMPLETE TRANSACTION</button>
+            <button class="checkout-btn" onclick="generateCode()">CHECKOUT</button>
         </div>
     </div>
 
-    <!-- CART BUTTON -->
+    <!-- CART BUTTON (Fixed) -->
     <div class="cart-button-fixed">
-        <span class="cart-label" id="cartLabel">OPEN</span>
-        <button class="cart-btn" onclick="toggleCart()">
-            🛒
-            <span class="cart-count" id="cartCount" style="display: none;">0</span>
-        </button>
+        <button class="cart-btn" onclick="toggleCart()">🛒</button>
+        <div class="cart-count" id="cartCount">0</div>
+        <div class="cart-label">CART</div>
     </div>
 
     <script>
-        // ===== CODE.JS INTEGRATION =====
-        // PvPEAUEL Event Shop - Code Decryption System
-        // Neon Matrix Terminal Style
+        // ==================== CODE CONFIGURATION ====================
+        // Base code: 503428
+        // Each position (0-5) corresponds to one item
+        const BASE_CODE = [5, 0, 3, 4, 2, 8];
+        
+        // Product Database - 6 items, one for each position in code
+        const products = [
+            { id: 1, name: 'Item 1', desc: 'Standard Item', price: 10, codePosition: 0 },
+            { id: 2, name: 'Item 2', desc: 'Premium Item', price: 15, codePosition: 1 },
+            { id: 3, name: 'Item 3', desc: 'Deluxe Item', price: 20, codePosition: 2 },
+            { id: 4, name: 'Item 4', desc: 'Ultra Item', price: 25, codePosition: 3 },
+            { id: 5, name: 'Item 5', desc: 'Mega Item', price: 30, codePosition: 4 },
+            { id: 6, name: 'Item 6', desc: 'Legendary Item', price: 50, codePosition: 5 }
+        ];
 
-        const CODE_CASES = {
-            'PEAV-INFO-001': {
-                title: 'SYSTEM INFORMATION',
-                type: 'info',
-                text: 'Welcome to the PvPEAUEL Event Shop.\nThis is an exclusive marketplace for special items and rewards.',
-                image: null
-            },
-            'PEAV-EVENT-2024': {
-                title: 'EVENT ANNOUNCEMENT',
-                type: 'event',
-                text: 'A new event is starting soon!\nStay tuned for more information.\n\nEvent Date: Coming Soon\nReward Pool: Unknown',
-                image: null
-            },
-            'PEAV-WELCOME-001': {
-                title: 'WELCOME',
-                type: 'welcome',
-                text: 'Thank you for visiting the Black Market Terminal.\nYour access has been verified.\n\nPlease enter a valid access code to proceed.',
-                image: null
-            },
-            'PEAV-IMAGE-TEST': {
-                title: 'IMAGE DISPLAY TEST',
-                type: 'image',
-                text: 'This is a test window with an image.\nThe image should display above this text.',
-                image: 'https://via.placeholder.com/300x200?text=Event+Shop+Image'
-            }
-        };
-
-        function showCodeModal(title, text, imageUrl = null, type = 'info') {
-            const existingModal = document.getElementById('code-modal');
-            if (existingModal) {
-                existingModal.remove();
-            }
-
-            const modal = document.createElement('div');
-            modal.id = 'code-modal';
-            modal.className = 'code-modal';
-
-            let modalContent = `
-                <div class="modal-header">
-                    <div class="modal-dots">
-                        <div class="dot r"></div>
-                        <div class="dot y"></div>
-                        <div class="dot g"></div>
-                    </div>
-                    <span class="modal-title">${title}</span>
-                    <button class="modal-close" onclick="closeCodeModal()">&times;</button>
-                </div>
-                <div class="modal-body">
-            `;
-
-            if (imageUrl) {
-                modalContent += `<img src="${imageUrl}" alt="Modal Image" class="modal-image" onerror="handleImageError(this)">`;
-            }
-
-            modalContent += `
-                    <p class="modal-text">${text.replace(/\n/g, '<br>')}</p>
-                </div>
-                <div class="modal-footer">
-                    <button class="modal-btn" onclick="closeCodeModal()">CLOSE TERMINAL</button>
-                </div>
-            `;
-
-            modal.innerHTML = modalContent;
-            document.body.appendChild(modal);
-
-            const backdrop = document.createElement('div');
-            backdrop.className = 'modal-backdrop';
-            backdrop.onclick = closeCodeModal;
-            document.body.insertBefore(backdrop, modal);
-        }
-
-        function closeCodeModal() {
-            const modal = document.getElementById('code-modal');
-            const backdrop = document.querySelector('.modal-backdrop');
-
-            if (modal) {
-                modal.style.animation = 'slideOutModal 0.3s ease forwards';
-                setTimeout(() => modal.remove(), 300);
-            }
-            if (backdrop) {
-                backdrop.style.animation = 'fadeOut 0.3s ease forwards';
-                setTimeout(() => backdrop.remove(), 300);
-            }
-        }
-
-        function handleImageError(imgElement) {
-            imgElement.style.display = 'none';
-            const text = imgElement.nextElementSibling;
-            if (text) {
-                text.innerHTML = '⚠ IMAGE LOAD FAILED<br><br>' + text.innerHTML;
-            }
-        }
-
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = `custom-overlay ${type}`;
-            notification.innerHTML = `
-                <div class="overlay-content">
-                    <h3>${type === 'success' ? '✓ SUCCESS' : type === 'error' ? '✗ ERROR' : 'ℹ INFO'}</h3>
-                    <p>${message}</p>
-                    <button onclick="this.parentElement.parentElement.remove()">CLOSE</button>
-                </div>
-            `;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                if (notification.parentElement) {
-                    notification.style.animation = 'slideOut 0.3s ease forwards';
-                    setTimeout(() => notification.remove(), 300);
-                }
-            }, 5000);
-        }
-
-        function evaluateCustomCode(code) {
-            console.log('[CUSTOM CODE EVALUATION] Processing code:', code);
-            showNotification(`CUSTOM CODE PROCESSING: ${code}`, 'info');
-        }
-
-        // ===== SHOP FUNCTIONALITY =====
-        const overlay = document.getElementById('overlay');
+        // Global State - track which items have been purchased
+        let purchasedItems = new Set();
         let cart = [];
-        let currentMemberId = null;
-        let currentBalance = 0;
 
+        // ==================== INITIALIZATION ====================
+        function initializeShop() {
+            renderProducts();
+        }
 
+        // ==================== PRODUCT RENDERING ====================
+        function renderProducts() {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-desc">${product.desc}</div>
+                        <div class="product-footer">
+                            <div class="product-price">${product.price}</div>
+                            <button class="buy-btn" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, ${product.codePosition})">
+                                ADD TO CART
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
-        document.addEventListener('mousemove', (e) => {
-            const x = e.clientX;
-            const y = e.clientY;
-            overlay.style.background = `radial-gradient(circle 180px at ${x}px ${y}px, transparent 0%, rgba(5, 11, 20, 0.98) 100%)`;
-        });
-
-        function checkIn() {
-            const input = document.getElementById('loginCode').value.toUpperCase();
+        // ==================== CART MANAGEMENT ====================
+        function addToCart(productId, productName, productPrice, codePosition) {
+            // Mark this position as purchased
+            purchasedItems.add(codePosition);
             
-            if(input.length === 14 && input.match(/^[A-Z]{4}-\d{6}-[0-9A-F]{2}$/)) {
-                parseLoginCode(input);
-            } else if(input.length > 0) {
-                alert("ERROR: INVALID CODE FORMAT.\nExpected: XXXX-000000-XX");
-            }
-        }
-
-        function parseLoginCode(code) {
-            const parts = code.split('-');
-            currentMemberId = parts[0];
-            const moneyHex = parts[2];
-            currentBalance = parseInt(moneyHex, 16);
-
-            document.getElementById('loginStatus').classList.add('active');
-            document.getElementById('loginStatus').textContent = `✓ LOGGED IN AS ${currentMemberId}`;
-            document.getElementById('displayMemberId').textContent = currentMemberId;
-            document.getElementById('displayBalance').textContent = currentBalance.toLocaleString();
-            document.getElementById('balanceDisplay').classList.add('active');
-
-            alert(`✓ LOGIN SUCCESSFUL\nMember: ${currentMemberId}\nBalance: ◆ ${currentBalance}`);
-        }
-
-        function decryptShop() {
-            const input = document.getElementById('shopCode').value.toUpperCase();
-            
-            if(input.length === 14 && input.match(/^[A-Z]{4}-\d{6}-[0-9A-F]{2}$/)) {
-                parseTransferCode(input);
-            } else if(input.length > 0) {
-                if(CODE_CASES[input]) {
-                    const codeCase = CODE_CASES[input];
-                    showCodeModal(codeCase.title, codeCase.text, codeCase.image, codeCase.type);
-                } else {
-                    evaluateCustomCode(input);
-                }
-            }
-        }
-
-        function parseTransferCode(code) {
-            const parts = code.split('-');
-            const memberId = parts[0];
-            const itemsCode = parts[1];
-            const moneyHex = parts[2];
-
-            const moneyDec = parseInt(moneyHex, 16);
-            const itemCounts = itemsCode.split('').map(Number);
-            const totalItems = itemCounts.reduce((a, b) => a + b, 0);
-
-            document.getElementById('memberId').textContent = memberId;
-            document.getElementById('moneyHex').textContent = moneyHex;
-            document.getElementById('moneyDec').textContent = moneyDec;
-            document.getElementById('itemsBought').textContent = totalItems;
-            document.getElementById('transferCode').textContent = code;
-
-            let breakdown = '';
-            itemCounts.forEach((count, index) => {
-                if(count > 0) {
-                    breakdown += `<div>✓ ${PRODUCTS[index].name}: ${count}x</div>`;
-                }
+            // Add to cart
+            cart.push({
+                id: productId,
+                name: productName,
+                price: productPrice,
+                codePosition: codePosition
             });
-            if(breakdown === '') breakdown = '<div style="color: #8da2bb;">No items purchased</div>';
-            document.getElementById('itemBreakdown').innerHTML = breakdown;
-
-            document.getElementById('codeInfoSection').classList.add('active');
-
-            alert(`ACCESS GRANTED FOR ${memberId}\nBalance: ◆ ${moneyDec}\nItems: ${totalItems}`);
-        }
-
-        function copyToClipboard() {
-            const code = document.getElementById('transferCode').textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                alert('✓ Code copied to clipboard!');
-            });
-        }
-
-        function generateTransferCode() {
-            if(!currentMemberId) {
-                alert('ERROR: Please check in first!');
-                return;
-            }
-
-            const itemsCode = cart.map(item => {
-                const index = PRODUCTS.findIndex(p => p.name === item.name);
-                return index !== -1 ? index : -1;
-            }).filter(i => i !== -1).reduce((acc, index) => {
-                acc[index] = (acc[index] || 0) + 1;
-                return acc;
-            }, {});
-
-            let itemsString = '000000';
-            for(let i = 0; i < 6; i++) {
-                itemsString = itemsString.substring(0, i) + (itemsCode[i] || 0) + itemsString.substring(i + 1);
-            }
-
-            const spent = cart.reduce((sum, item) => sum + item.price, 0);
-            const newBalance = currentBalance - spent;
-
-            if(newBalance < 0) {
-                alert('ERROR: INSUFFICIENT FUNDS\nRequired: ◆ ' + spent + '\nAvailable: ◆ ' + currentBalance);
-                return;
-            }
-
-            const moneyHex = newBalance.toString(16).toUpperCase().padStart(2, '0');
-            const code = `${currentMemberId}-${itemsString}-${moneyHex}`;
             
-            document.getElementById('transferCode').textContent = code;
-            parseTransferCode(code);
+            updateCartUI();
+            showOverlay('Item Added', `${productName} added to cart!`, 'success');
         }
 
-        function addToCart(productName, price) {
-            cart.push({ name: productName, price: price, id: Date.now() });
-            updateCart();
-            toggleCart();
+        function removeFromCart(index) {
+            const item = cart[index];
+            cart.splice(index, 1);
+            
+            // Check if this item is still in cart
+            const stillInCart = cart.some(cartItem => cartItem.codePosition === item.codePosition);
+            if (!stillInCart) {
+                purchasedItems.delete(item.codePosition);
+            }
+            
+            updateCartUI();
         }
 
-        function toggleCart() {
-            const sidebar = document.getElementById('cartSidebar');
-            sidebar.classList.toggle('active');
-        }
-
-        function removeFromCart(id) {
-            cart = cart.filter(item => item.id !== id);
-            updateCart();
-        }
-
-        function updateCart() {
+        function updateCartUI() {
             const cartItemsDiv = document.getElementById('cartItems');
-            const cartCountSpan = document.getElementById('cartCount');
-            const cartTotalSpan = document.getElementById('cartTotal');
-            const checkoutBtn = document.getElementById('checkoutBtn');
-
+            const cartCountDiv = document.getElementById('cartCount');
+            const cartTotalDiv = document.getElementById('cartTotal');
+            
             if (cart.length === 0) {
-                cartItemsDiv.innerHTML = '<div class="cart-empty">NO ITEMS IN CART</div>';
-                cartCountSpan.style.display = 'none';
-                cartTotalSpan.textContent = '0';
-                checkoutBtn.disabled = true;
+                cartItemsDiv.innerHTML = '<div class="cart-empty">Cart is empty</div>';
+                cartCountDiv.textContent = '0';
+                cartTotalDiv.textContent = '0';
             } else {
-                cartItemsDiv.innerHTML = cart.map(item => `
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                cartItemsDiv.innerHTML = cart.map((item, index) => `
                     <div class="cart-item">
                         <div class="cart-item-info">
                             <div class="cart-item-name">${item.name}</div>
                             <div class="cart-item-price">◆ ${item.price}</div>
                         </div>
-                        <button class="cart-item-remove" onclick="removeFromCart(${item.id})">DEL</button>
+                        <button class="cart-item-remove" onclick="removeFromCart(${index})">Remove</button>
                     </div>
                 `).join('');
-
-                const total = cart.reduce((sum, item) => sum + item.price, 0);
-                cartTotalSpan.textContent = total.toLocaleString();
-                cartCountSpan.textContent = cart.length;
-                cartCountSpan.style.display = 'flex';
-                checkoutBtn.disabled = false;
+                cartCountDiv.textContent = cart.length;
+                cartTotalDiv.textContent = total;
             }
         }
 
-        function checkout() {
-            if (cart.length > 0) {
-                generateTransferCode();
-                cart = [];
-                updateCart();
-                setTimeout(() => toggleCart(), 500);
-            }
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('active');
         }
 
-        // Enter-Taste für Code-Eingaben
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginInput = document.getElementById('loginCode');
-            const shopInput = document.getElementById('shopCode');
+        // ==================== CODE GENERATION ====================
+        function generateCode() {
+            if (cart.length === 0) {
+                showOverlay('Empty Cart', 'Please add items to your cart', 'info');
+                return;
+            }
+
+            // Create code array from base
+            const codeArray = [...BASE_CODE];
             
-            if (loginInput) {
-                loginInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') checkIn();
-                });
-            }
-            if (shopInput) {
-                shopInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') decryptShop();
-                });
-            }
-        });
+            // For each purchased item, increment that position by 1
+            purchasedItems.forEach(position => {
+                codeArray[position] = codeArray[position] + 1;
+            });
+            
+            const generatedCode = codeArray.join('');
 
-        // Console logging
-        console.log('%c[SYSTEM] Verfügbare Test-Codes:', 'color: #00f3ff; font-weight: bold;');
-        Object.keys(CODE_CASES).forEach(code => {
-            console.log(`%c${code}`, 'color: #ff0055;');
-        });
-        console.log('%c\nAlle anderen Codes werden zur Custom-Evaluation weitergeleitet.', 'color: #2ecc71;');
+            // Display the generated code
+            document.getElementById('generatedCode').textContent = generatedCode;
+            document.getElementById('cartItemCount').textContent = cart.length;
+            document.getElementById('cartTotalPrice').textContent = cart.reduce((sum, item) => sum + item.price, 0);
+            document.getElementById('codeInfoSection').classList.add('active');
+
+            // Log for debugging
+            console.log('Generated Code:', generatedCode);
+            console.log('Base Code:', BASE_CODE.join(''));
+            console.log('Purchased Items:', Array.from(purchasedItems));
+            console.log('Cart:', cart);
+
+            toggleCart();
+            showOverlay('Code Generated', `Your code is ready! ${generatedCode}`, 'success');
+        }
+
+        // ==================== CODE VERIFICATION ====================
+        function verifyCode() {
+            const inputCode = document.getElementById('codeInput').value.trim();
+            
+            if (!inputCode || inputCode.length !== 6) {
+                showOverlay('Invalid Code', 'Code must be exactly 6 digits', 'info');
+                return;
+            }
+
+            // Parse input code
+            const inputArray = inputCode.split('').map(Number);
+            
+            // Check each position
+            const purchasedPositions = new Set();
+            let isValid = true;
+            
+            for (let i = 0; i < 6; i++) {
+                const inputDigit = inputArray[i];
+                const baseDigit = BASE_CODE[i];
+                
+                if (inputDigit === baseDigit) {
+                    // Item NOT purchased at this position
+                    continue;
+                } else if (inputDigit === baseDigit + 1) {
+                    // Item WAS purchased at this position
+                    purchasedPositions.add(i);
+                } else {
+                    // Invalid digit - code has been tampered with
+                    isValid = false;
+                    break;
+                }
+            }
+
+            if (!isValid) {
+                showOverlay('Tampered Code', 'Code verification failed - code has been modified', 'info');
+                document.getElementById('codeInput').value = '';
+                return;
+            }
+
+            // Code is valid - show purchased items
+            const purchasedProductNames = products
+                .filter(p => purchasedPositions.has(p.codePosition))
+                .map(p => p.name)
+                .join(', ');
+
+            showOverlay('Valid Code', `Code accepted! Purchased: ${purchasedProductNames}`, 'success');
+            document.getElementById('codeInput').value = '';
+            console.log('Code verified - Purchased positions:', Array.from(purchasedPositions));
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function copyCode() {
+            const codeText = document.getElementById('generatedCode').textContent;
+            if (codeText === '-') {
+                showOverlay('No Code', 'Generate a code first', 'info');
+                return;
+            }
+            navigator.clipboard.writeText(codeText).then(() => {
+                showOverlay('Copied', 'Code copied to clipboard!', 'success');
+            });
+        }
+
+        function showOverlay(title, message, type = 'info') {
+            const overlay = document.createElement('div');
+            overlay.className = `custom-overlay ${type}`;
+            overlay.innerHTML = `
+                <div class="overlay-content">
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <button onclick="this.parentElement.parentElement.remove()">Close</button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.remove(), 4000);
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', initializeShop);
     </script>
 </body>
 </html>
