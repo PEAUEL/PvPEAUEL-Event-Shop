@@ -56,16 +56,17 @@
             height: 100%;
             background-color: #020208;
             font-family: 'Fira Code', monospace;
-            overflow: hidden;
+            overflow: auto;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
+            padding: 40px 20px;
         }
 
         /* DER HOVER-LICHTEFFEKT (TASCHENLAMPE) */
         /* Die untere Ebene: Sichtbar nur dort, wo das Licht hinfällt */
         .matrix-bg {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -79,7 +80,7 @@
 
         /* Die obere Ebene: Dunkelblaues Overlay mit Loch (Mauszeiger) */
         .darkness-overlay {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -90,11 +91,20 @@
             transition: background 0.1s ease;
         }
 
+        /* MAIN WRAPPER */
+        .content-wrapper {
+            position: relative;
+            z-index: 3;
+            max-width: 1200px;
+            width: 100%;
+        }
+
         /* SHOP CONTAINER */
         .shop-container {
             position: relative;
             z-index: 3;
-            width: 450px;
+            width: 100%;
+            max-width: 450px;
             padding: 40px;
             background: rgba(6, 15, 30, 0.75);
             backdrop-filter: blur(12px);
@@ -104,6 +114,7 @@
                         inset 0 0 15px rgba(0, 243, 255, 0.1);
             text-align: center;
             animation: float 6s ease-in-out infinite;
+            margin: 0 auto 40px;
         }
 
         /* TITEL MIT NEON-GLOW-ANIMATION */
@@ -194,6 +205,148 @@
             left: 100%;
         }
 
+        /* INVENTORY GRID */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* PRODUCT CARD STYLING */
+        .product-card {
+            position: relative;
+            background: rgba(6, 15, 30, 0.6);
+            border: 2px solid #ff0055;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2),
+                        inset 0 0 10px rgba(255, 0, 85, 0.05);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.2s; }
+        .product-card:nth-child(3) { animation-delay: 0.3s; }
+        .product-card:nth-child(4) { animation-delay: 0.4s; }
+        .product-card:nth-child(5) { animation-delay: 0.5s; }
+        .product-card:nth-child(6) { animation-delay: 0.6s; }
+
+        .product-card:hover {
+            border-color: #00f3ff;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.6),
+                        inset 0 0 20px rgba(0, 243, 255, 0.1),
+                        0 0 50px rgba(255, 0, 85, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* PRODUCT IMAGE */
+        .product-image {
+            width: 100%;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid #00f3ff;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            object-fit: cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 243, 255, 0.1) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        /* PRODUCT INFO */
+        .product-info {
+            text-align: left;
+        }
+
+        .product-name {
+            color: #00f3ff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+
+        .product-desc {
+            color: #8da2bb;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        /* PRICE SECTION */
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 0, 85, 0.3);
+        }
+
+        .product-price {
+            color: #ff0055;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.8);
+        }
+
+        .product-price::before {
+            content: '◆ ';
+        }
+
+        .buy-btn {
+            background: transparent;
+            border: 1px solid #ff0055;
+            color: #ff0055;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'Fira Code', monospace;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .buy-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: #ff0055;
+            z-index: -1;
+            transition: 0.3s;
+        }
+
+        .buy-btn:hover {
+            color: #020208;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.8);
+        }
+
+        .buy-btn:hover::before {
+            left: 0;
+        }
+
         /* ANIMATIONEN (CSS) */
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
@@ -203,6 +356,22 @@
         @keyframes pulseGlow {
             0% { text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff; }
             100% { text-shadow: 0 0 15px #00f3ff, 0 0 30px #00f3ff, 0 0 40px #ff0055; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         /* Deko-Elemente */
@@ -221,6 +390,18 @@
         .dot.y { background: #ffbd2e; }
         .dot.g { background: #27c93f; }
 
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .inventory-grid {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                gap: 15px;
+            }
+
+            .shop-container {
+                max-width: 100%;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -232,22 +413,101 @@
     <!-- Das dunkelblaue Overlay, das durchleuchtet wird -->
     <div class="darkness-overlay" id="overlay"></div>
 
-    <!-- Der Terminal Shop -->
-    <div class="shop-container">
-        <div class="terminal-header">
-            <div class="dot r"></div>
-            <div class="dot y"></div>
-            <div class="dot g"></div>
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <!-- Der Terminal Shop -->
+        <div class="shop-container">
+            <div class="terminal-header">
+                <div class="dot r"></div>
+                <div class="dot y"></div>
+                <div class="dot g"></div>
+            </div>
+            
+            <h1>Black Market</h1>
+            <p>// ENTER ACCESS CODE TO UNLOCK INVENTORY</p>
+            
+            <div class="input-group">
+                <input type="text" class="code-input" placeholder="XXXX-XXXX-XXXX" maxlength="14" id="shopCode">
+            </div>
+            
+            <button class="submit-btn" onclick="decryptShop()">INITIALIZE DECRYPTION</button>
         </div>
-        
-        <h1>Black Market</h1>
-        <p>// ENTER ACCESS CODE TO UNLOCK INVENTORY</p>
-        
-        <div class="input-group">
-            <input type="text" class="code-input" placeholder="XXXX-XXXX-XXXX" maxlength="14" id="shopCode">
+
+        <!-- INVENTORY SECTION -->
+        <div class="inventory-grid" id="inventoryGrid">
+            <!-- Products will be dynamically generated or hardcoded here -->
+            <div class="product-card">
+                <img src="https://via.placeholder.com/280x180/050b14/00f3ff?text=PLASMA+RIFLE" alt="Plasma Rifle" class="product-image">
+                <div class="product-info">
+                    <div class="product-name">Plasma Rifle</div>
+                    <div class="product-desc">Advanced energy weapon with 12-second cooldown</div>
+                    <div class="product-footer">
+                        <div class="product-price">4,500</div>
+                        <button class="buy-btn" onclick="addToCart('Plasma Rifle', 4500)">BUY</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/280x180/050b14/ff0055?text=STEALTH+ARMOR" alt="Stealth Armor" class="product-image">
+                <div class="product-info">
+                    <div class="product-name">Stealth Armor</div>
+                    <div class="product-desc">Invisibility cloak with 30-minute duration</div>
+                    <div class="product-footer">
+                        <div class="product-price">7,200</div>
+                        <button class="buy-btn" onclick="addToCart('Stealth Armor', 7200)">BUY</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/280x180/050b14/00f3ff?text=QUANTUM+DRIVE" alt="Quantum Drive" class="product-image">
+                <div class="product-info">
+                    <div class="product-name">Quantum Drive</div>
+                    <div class="product-desc">FTL acceleration module for vehicles</div>
+                    <div class="product-footer">
+                        <div class="product-price">5,800</div>
+                        <button class="buy-btn" onclick="addToCart('Quantum Drive', 5800)">BUY</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/280x180/050b14/ff0055?text=HOLO+DECOY" alt="Holo Decoy" class="product-image">
+                <div class="product-info">
+                    <div class="product-name">Holo Decoy</div>
+                    <div class="product-desc">Creates up to 5 decoy holograms</div>
+                    <div class="product-footer">
+                        <div class="product-price">3,100</div>
+                        <button class="buy-btn" onclick="addToCart('Holo Decoy', 3100)">BUY</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/280x180/050b14/00f3ff?text=NEURAL+IMPLANT" alt="Neural Implant" class="product-image">
+                <div class="product-info">
+                    <div class="product-name">Neural Implant</div>
+                    <div class="product-desc">Direct mind-machine interface system</div>
+                    <div class="product-footer">
+                        <div class="product-price">9,500</div>
+                        <button class="buy-btn" onclick="addToCart('Neural Implant', 9500)">BUY</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://via.placeholder.com/280x180/050b14/ff0055?text=EMP+GRENADE" alt="EMP Grenade" class="product-image">
+                <div class="product-info">
+                    <div class="product-name">EMP Grenade</div>
+                    <div class="product-desc">Electromagnetic pulse with 50m radius</div>
+                    <div class="product-footer">
+                        <div class="product-price">2,200</div>
+                        <button class="buy-btn" onclick="addToCart('EMP Grenade', 2200)">BUY</button>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <button class="submit-btn" onclick="decryptShop()">INITIALIZE DECRYPTION</button>
     </div>
 
     <script>
@@ -271,6 +531,11 @@
             } else {
                 alert("ERROR: INVALID CHECKSUM.");
             }
+        }
+
+        // Cart system
+        function addToCart(productName, price) {
+            alert(`✓ ${productName} (◆ ${price}) added to cart!`);
         }
     </script>
 </body>
