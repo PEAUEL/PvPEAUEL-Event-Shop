@@ -52,6 +52,11 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(120%); opacity: 0; }
+        }
+
         body, html {
             width: 100%;
             height: 100%;
@@ -802,6 +807,182 @@
             white-space: nowrap;
         }
 
+        /* MODAL STYLES FROM CODE.JS */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 2, 8, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1998;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        .code-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            background: rgba(6, 15, 30, 0.95);
+            border: 2px solid #00f3ff;
+            border-radius: 12px;
+            box-shadow: 0 0 40px rgba(0, 243, 255, 0.4),
+                        inset 0 0 20px rgba(0, 243, 255, 0.1);
+            z-index: 1999;
+            display: flex;
+            flex-direction: column;
+            animation: slideInModal 0.3s ease forwards;
+            overflow: hidden;
+        }
+
+        @keyframes slideInModal {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -45%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        @keyframes slideOutModal {
+            from {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+            to {
+                opacity: 0;
+                transform: translate(-50%, -55%);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #00f3ff;
+            background: linear-gradient(135deg, rgba(0, 243, 255, 0.1), transparent);
+        }
+
+        .modal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .modal-title {
+            flex: 1;
+            text-align: center;
+            color: #00f3ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px #00f3ff;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #ff0055;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: #00f3ff;
+            transform: scale(1.2);
+            text-shadow: 0 0 10px #00f3ff;
+        }
+
+        .modal-body {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #00f3ff;
+            border-radius: 10px;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 300px;
+            border: 1px solid #00f3ff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.3);
+        }
+
+        .modal-text {
+            color: #8da2bb;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            text-align: center;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #00f3ff;
+            display: flex;
+            gap: 10px;
+            background: linear-gradient(135deg, transparent, rgba(0, 243, 255, 0.1));
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid #00f3ff;
+            border-radius: 6px;
+            color: #00f3ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background: #00f3ff;
+            color: #020208;
+            box-shadow: 0 0 20px #00f3ff;
+        }
+
         /* ANIMATIONEN (CSS) */
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
@@ -895,13 +1076,33 @@
             .code-info-grid {
                 grid-template-columns: 1fr;
             }
+
+            .code-modal {
+                width: 95%;
+                max-height: 90vh;
+            }
+
+            .modal-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .modal-title {
+                font-size: 1rem;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .modal-text {
+                font-size: 0.85rem;
+            }
         }
 
     </style>
 </head>
 <body>
-    <script source="code.js"></script>
-
     <!-- Versteckte Code-Matrix im Hintergrund -->
     <div class="matrix-bg"></div>
 
@@ -1099,6 +1300,129 @@
     </div>
 
     <script>
+        // ===== CODE.JS INTEGRATION =====
+        // PvPEAUEL Event Shop - Code Decryption System
+        // Neon Matrix Terminal Style
+
+        const CODE_CASES = {
+            'PEAV-INFO-001': {
+                title: 'SYSTEM INFORMATION',
+                type: 'info',
+                text: 'Welcome to the PvPEAUEL Event Shop.\nThis is an exclusive marketplace for special items and rewards.',
+                image: null
+            },
+            'PEAV-EVENT-2024': {
+                title: 'EVENT ANNOUNCEMENT',
+                type: 'event',
+                text: 'A new event is starting soon!\nStay tuned for more information.\n\nEvent Date: Coming Soon\nReward Pool: Unknown',
+                image: null
+            },
+            'PEAV-WELCOME-001': {
+                title: 'WELCOME',
+                type: 'welcome',
+                text: 'Thank you for visiting the Black Market Terminal.\nYour access has been verified.\n\nPlease enter a valid access code to proceed.',
+                image: null
+            },
+            'PEAV-IMAGE-TEST': {
+                title: 'IMAGE DISPLAY TEST',
+                type: 'image',
+                text: 'This is a test window with an image.\nThe image should display above this text.',
+                image: 'https://via.placeholder.com/300x200?text=Event+Shop+Image'
+            }
+        };
+
+        function showCodeModal(title, text, imageUrl = null, type = 'info') {
+            const existingModal = document.getElementById('code-modal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            const modal = document.createElement('div');
+            modal.id = 'code-modal';
+            modal.className = 'code-modal';
+
+            let modalContent = `
+                <div class="modal-header">
+                    <div class="modal-dots">
+                        <div class="dot r"></div>
+                        <div class="dot y"></div>
+                        <div class="dot g"></div>
+                    </div>
+                    <span class="modal-title">${title}</span>
+                    <button class="modal-close" onclick="closeCodeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+            `;
+
+            if (imageUrl) {
+                modalContent += `<img src="${imageUrl}" alt="Modal Image" class="modal-image" onerror="handleImageError(this)">`;
+            }
+
+            modalContent += `
+                    <p class="modal-text">${text.replace(/\n/g, '<br>')}</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-btn" onclick="closeCodeModal()">CLOSE TERMINAL</button>
+                </div>
+            `;
+
+            modal.innerHTML = modalContent;
+            document.body.appendChild(modal);
+
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop';
+            backdrop.onclick = closeCodeModal;
+            document.body.insertBefore(backdrop, modal);
+        }
+
+        function closeCodeModal() {
+            const modal = document.getElementById('code-modal');
+            const backdrop = document.querySelector('.modal-backdrop');
+
+            if (modal) {
+                modal.style.animation = 'slideOutModal 0.3s ease forwards';
+                setTimeout(() => modal.remove(), 300);
+            }
+            if (backdrop) {
+                backdrop.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => backdrop.remove(), 300);
+            }
+        }
+
+        function handleImageError(imgElement) {
+            imgElement.style.display = 'none';
+            const text = imgElement.nextElementSibling;
+            if (text) {
+                text.innerHTML = '⚠ IMAGE LOAD FAILED<br><br>' + text.innerHTML;
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `custom-overlay ${type}`;
+            notification.innerHTML = `
+                <div class="overlay-content">
+                    <h3>${type === 'success' ? '✓ SUCCESS' : type === 'error' ? '✗ ERROR' : 'ℹ INFO'}</h3>
+                    <p>${message}</p>
+                    <button onclick="this.parentElement.parentElement.remove()">CLOSE</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOut 0.3s ease forwards';
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        function evaluateCustomCode(code) {
+            console.log('[CUSTOM CODE EVALUATION] Processing code:', code);
+            showNotification(`CUSTOM CODE PROCESSING: ${code}`, 'info');
+        }
+
+        // ===== SHOP FUNCTIONALITY =====
         const overlay = document.getElementById('overlay');
         let cart = [];
         let currentMemberId = null;
@@ -1113,14 +1437,12 @@
             { name: 'EMP Grenade', price: 2200 }
         ];
 
-        // JS fängt die Mausbewegung ab und baut den Taschenlampen-Effekt dynamically in CSS
         document.addEventListener('mousemove', (e) => {
             const x = e.clientX;
             const y = e.clientY;
             overlay.style.background = `radial-gradient(circle 180px at ${x}px ${y}px, transparent 0%, rgba(5, 11, 20, 0.98) 100%)`;
         });
 
-        // CHECK-IN FUNCTION
         function checkIn() {
             const input = document.getElementById('loginCode').value.toUpperCase();
             
@@ -1131,14 +1453,12 @@
             }
         }
 
-        // Parse login code
         function parseLoginCode(code) {
             const parts = code.split('-');
             currentMemberId = parts[0];
             const moneyHex = parts[2];
             currentBalance = parseInt(moneyHex, 16);
 
-            // Update display
             document.getElementById('loginStatus').classList.add('active');
             document.getElementById('loginStatus').textContent = `✓ LOGGED IN AS ${currentMemberId}`;
             document.getElementById('displayMemberId').textContent = currentMemberId;
@@ -1148,18 +1468,21 @@
             alert(`✓ LOGIN SUCCESSFUL\nMember: ${currentMemberId}\nBalance: ◆ ${currentBalance}`);
         }
 
-        // Kleines interaktives Gimmick bei Code-Eingabe
         function decryptShop() {
             const input = document.getElementById('shopCode').value.toUpperCase();
             
             if(input.length === 14 && input.match(/^[A-Z]{4}-\d{6}-[0-9A-F]{2}$/)) {
                 parseTransferCode(input);
             } else if(input.length > 0) {
-                alert("ERROR: INVALID CODE FORMAT.\nExpected: XXXX-000000-00");
+                if(CODE_CASES[input]) {
+                    const codeCase = CODE_CASES[input];
+                    showCodeModal(codeCase.title, codeCase.text, codeCase.image, codeCase.type);
+                } else {
+                    evaluateCustomCode(input);
+                }
             }
         }
 
-        // Parse transfer code
         function parseTransferCode(code) {
             const parts = code.split('-');
             const memberId = parts[0];
@@ -1170,14 +1493,12 @@
             const itemCounts = itemsCode.split('').map(Number);
             const totalItems = itemCounts.reduce((a, b) => a + b, 0);
 
-            // Display info
             document.getElementById('memberId').textContent = memberId;
             document.getElementById('moneyHex').textContent = moneyHex;
             document.getElementById('moneyDec').textContent = moneyDec;
             document.getElementById('itemsBought').textContent = totalItems;
             document.getElementById('transferCode').textContent = code;
 
-            // Build item breakdown
             let breakdown = '';
             itemCounts.forEach((count, index) => {
                 if(count > 0) {
@@ -1187,13 +1508,11 @@
             if(breakdown === '') breakdown = '<div style="color: #8da2bb;">No items purchased</div>';
             document.getElementById('itemBreakdown').innerHTML = breakdown;
 
-            // Show info section
             document.getElementById('codeInfoSection').classList.add('active');
 
             alert(`ACCESS GRANTED FOR ${memberId}\nBalance: ◆ ${moneyDec}\nItems: ${totalItems}`);
         }
 
-        // Copy code to clipboard
         function copyToClipboard() {
             const code = document.getElementById('transferCode').textContent;
             navigator.clipboard.writeText(code).then(() => {
@@ -1201,7 +1520,6 @@
             });
         }
 
-        // Generate transfer code
         function generateTransferCode() {
             if(!currentMemberId) {
                 alert('ERROR: Please check in first!');
@@ -1236,7 +1554,6 @@
             parseTransferCode(code);
         }
 
-        // Cart functions
         function addToCart(productName, price) {
             cart.push({ name: productName, price: price, id: Date.now() });
             updateCart();
@@ -1291,6 +1608,30 @@
                 setTimeout(() => toggleCart(), 500);
             }
         }
+
+        // Enter-Taste für Code-Eingaben
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginInput = document.getElementById('loginCode');
+            const shopInput = document.getElementById('shopCode');
+            
+            if (loginInput) {
+                loginInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') checkIn();
+                });
+            }
+            if (shopInput) {
+                shopInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') decryptShop();
+                });
+            }
+        });
+
+        // Console logging
+        console.log('%c[SYSTEM] Verfügbare Test-Codes:', 'color: #00f3ff; font-weight: bold;');
+        Object.keys(CODE_CASES).forEach(code => {
+            console.log(`%c${code}`, 'color: #ff0055;');
+        });
+        console.log('%c\nAlle anderen Codes werden zur Custom-Evaluation weitergeleitet.', 'color: #2ecc71;');
     </script>
 </body>
 </html>
