@@ -206,6 +206,104 @@
             left: 100%;
         }
 
+        /* CODE INFO SECTION */
+        .code-info-section {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(0, 243, 255, 0.3);
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .code-info-section.active {
+            display: block;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .code-info-title {
+            color: #00f3ff;
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .code-display {
+            background: rgba(2, 2, 8, 0.8);
+            border: 1px solid #ff0055;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .code-display-label {
+            color: #8da2bb;
+            font-size: 0.75rem;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .code-display-text {
+            color: #ff0055;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.6);
+            word-break: break-all;
+        }
+
+        .code-copy-btn {
+            width: 100%;
+            padding: 10px;
+            background: transparent;
+            border: 1px solid #ff0055;
+            border-radius: 4px;
+            color: #ff0055;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .code-copy-btn:hover {
+            background: #ff0055;
+            color: #020208;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.8);
+        }
+
+        .code-info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.8rem;
+        }
+
+        .code-info-item {
+            background: rgba(0, 243, 255, 0.05);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .code-info-item-label {
+            color: #8da2bb;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 3px;
+        }
+
+        .code-info-item-value {
+            color: #00f3ff;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
         /* INVENTORY GRID */
         .inventory-grid {
             display: grid;
@@ -687,6 +785,10 @@
                 height: 50px;
                 font-size: 1.3rem;
             }
+
+            .code-info-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
     </style>
@@ -714,10 +816,44 @@
             <p>// ENTER ACCESS CODE TO UNLOCK INVENTORY</p>
             
             <div class="input-group">
-                <input type="text" class="code-input" placeholder="XXXX-XXXX-XXXX" maxlength="14" id="shopCode">
+                <input type="text" class="code-input" placeholder="XXXX-XXXXXX-XX" maxlength="14" id="shopCode">
             </div>
             
             <button class="submit-btn" onclick="decryptShop()">INITIALIZE DECRYPTION</button>
+
+            <!-- CODE INFO SECTION -->
+            <div class="code-info-section" id="codeInfoSection">
+                <div class="code-info-title">📊 TRANSFER CODE DECODER</div>
+                <div class="code-display">
+                    <div class="code-display-label">MINECRAFT TRANSFER CODE</div>
+                    <div class="code-display-text" id="transferCode">XXXX-000000-00</div>
+                </div>
+                <button class="code-copy-btn" onclick="copyToClipboard()">COPY CODE</button>
+                
+                <div class="code-info-grid">
+                    <div class="code-info-item">
+                        <div class="code-info-item-label">MEMBER ID</div>
+                        <div class="code-info-item-value" id="memberId">XXXX</div>
+                    </div>
+                    <div class="code-info-item">
+                        <div class="code-info-item-label">MONEY (HEX)</div>
+                        <div class="code-info-item-value" id="moneyHex">00</div>
+                    </div>
+                    <div class="code-info-item">
+                        <div class="code-info-item-label">MONEY (DEC)</div>
+                        <div class="code-info-item-value" id="moneyDec">0</div>
+                    </div>
+                    <div class="code-info-item">
+                        <div class="code-info-item-label">ITEMS BOUGHT</div>
+                        <div class="code-info-item-value" id="itemsBought">0</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0, 243, 255, 0.3);">
+                    <div class="code-info-title" style="margin-bottom: 10px;">ITEM BREAKDOWN</div>
+                    <div id="itemBreakdown" style="font-size: 0.8rem; color: #8da2bb; line-height: 1.6;"></div>
+                </div>
+            </div>
         </div>
 
         <!-- INVENTORY SECTION -->
@@ -826,6 +962,14 @@
     <script>
         const overlay = document.getElementById('overlay');
         let cart = [];
+        const PRODUCTS = [
+            { name: 'Plasma Rifle', price: 4500 },
+            { name: 'Stealth Armor', price: 7200 },
+            { name: 'Quantum Drive', price: 5800 },
+            { name: 'Holo Decoy', price: 3100 },
+            { name: 'Neural Implant', price: 9500 },
+            { name: 'EMP Grenade', price: 2200 }
+        ];
 
         // JS fängt die Mausbewegung ab und baut den Taschenlampen-Effekt dynamically in CSS
         document.addEventListener('mousemove', (e) => {
@@ -836,12 +980,85 @@
 
         // Kleines interaktives Gimmick bei Code-Eingabe
         function decryptShop() {
-            const input = document.getElementById('shopCode').value;
-            if(input.length > 0) {
-                alert("ACCESS GRANTED. LOADING FORBIDDEN GEAR...");
-            } else {
-                alert("ERROR: INVALID CHECKSUM.");
+            const input = document.getElementById('shopCode').value.toUpperCase();
+            
+            if(input.length === 14 && input.match(/^[A-Z]{4}-\d{6}-[0-9A-F]{2}$/)) {
+                parseTransferCode(input);
+            } else if(input.length > 0) {
+                alert("ERROR: INVALID CODE FORMAT.\nExpected: XXXX-000000-00");
             }
+        }
+
+        // Parse transfer code
+        function parseTransferCode(code) {
+            const parts = code.split('-');
+            const memberId = parts[0];
+            const itemsCode = parts[1];
+            const moneyHex = parts[2];
+
+            const moneyDec = parseInt(moneyHex, 16);
+            const itemCounts = itemsCode.split('').map(Number);
+            const totalItems = itemCounts.reduce((a, b) => a + b, 0);
+
+            // Display info
+            document.getElementById('memberId').textContent = memberId;
+            document.getElementById('moneyHex').textContent = moneyHex;
+            document.getElementById('moneyDec').textContent = moneyDec;
+            document.getElementById('itemsBought').textContent = totalItems;
+            document.getElementById('transferCode').textContent = code;
+
+            // Build item breakdown
+            let breakdown = '';
+            itemCounts.forEach((count, index) => {
+                if(count > 0) {
+                    breakdown += `<div>✓ ${PRODUCTS[index].name}: ${count}x</div>`;
+                }
+            });
+            if(breakdown === '') breakdown = '<div style="color: #8da2bb;">No items purchased</div>';
+            document.getElementById('itemBreakdown').innerHTML = breakdown;
+
+            // Show info section
+            document.getElementById('codeInfoSection').classList.add('active');
+
+            alert(`ACCESS GRANTED FOR ${memberId}\nMoney: ◆ ${moneyDec}\nItems: ${totalItems}`);
+        }
+
+        // Copy code to clipboard
+        function copyToClipboard() {
+            const code = document.getElementById('transferCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✓ Code copied to clipboard!');
+            });
+        }
+
+        // Generate transfer code
+        function generateTransferCode() {
+            // You would need to input member ID
+            const memberId = prompt('Enter Member ID (4 letters):').toUpperCase();
+            if(!memberId || memberId.length !== 4) {
+                alert('Invalid member ID');
+                return;
+            }
+
+            const itemsCode = cart.map(item => {
+                const index = PRODUCTS.findIndex(p => p.name === item.name);
+                return index !== -1 ? index : -1;
+            }).filter(i => i !== -1).reduce((acc, index) => {
+                acc[index] = (acc[index] || 0) + 1;
+                return acc;
+            }, {});
+
+            let itemsString = '000000';
+            for(let i = 0; i < 6; i++) {
+                itemsString = itemsString.substring(0, i) + (itemsCode[i] || 0) + itemsString.substring(i + 1);
+            }
+
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            const moneyHex = total.toString(16).toUpperCase().padStart(2, '0');
+
+            const code = `${memberId}-${itemsString}-${moneyHex}`;
+            document.getElementById('transferCode').textContent = code;
+            parseTransferCode(code);
         }
 
         // Cart functions
@@ -893,11 +1110,10 @@
 
         function checkout() {
             if (cart.length > 0) {
-                const total = cart.reduce((sum, item) => sum + item.price, 0);
-                alert(`✓ TRANSACTION COMPLETE!\n\nTotal: ◆ ${total.toLocaleString()}\n\nItems: ${cart.length}\n\n>> GEAR INCOMING`);
+                generateTransferCode();
                 cart = [];
                 updateCart();
-                toggleCart();
+                setTimeout(() => toggleCart(), 500);
             }
         }
     </script>
